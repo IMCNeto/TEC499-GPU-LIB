@@ -17,7 +17,7 @@
 ## SOBRE O PROJETO
 <div align="justify"> 
 
-O objetivo geral do projeto é implementar uma biblioteca em assembly contendo funções gráficas para facilitar a implementação do jogo Tetris em C e exibir o jogo em um monitor VGA utilizando a interface de conexão entre HPS e FPGA da DE1-SoC;.
+O objetivo geral do projeto é implementar uma biblioteca em assembly contendo funções gráficas para facilitar a implementação do jogo Tetris em C e exibir o jogo em um monitor VGA utilizando a interface de conexão entre HPS e FPGA da DE1-SoC.
 ## CARACTERÍSTICAS DO PROJETO
 
 - **Linguagem**: C e Assembly 
@@ -79,10 +79,7 @@ O jogo faz uso de threads para permitir a execução de tarefas concorrentes. Du
 
 **Tabuleiro e Peças no VGA**
 
-O jogo exibe o tabuleiro e as peças na tela usando um controlador VGA (Video Graphics Array). Tabuleiro: O tabuleiro é uma matriz bidimensional (int board[ROWS][COLS]) que representa as células onde as peças caem. A função initBoard() inicializa essa matriz, e cada célula pode estar vazia ou ocupada por parte de uma peça. O tabuleiro é renderizado na tela a cada iteração do loop principal do jogo, sendo atualizado conforme as peças se movem ou são fixadas. Peças: As peças do jogo são representadas por structs que contêm suas formas e posições. A função getRandomPiece() seleciona aleatoriamente uma nova peça para cair. A peça atual é renderizada na posição adequada no tabuleiro com a função renderWithPiece(), que combina o estado do tabuleiro com a peça ativa. Exibição VGA: A comunicação com a tela VGA é feita através de um processador gráfico desenvolvido pelo estudante Gabriel Sá Barreto. As funções background_block, draw_square, clear_screen e bg_color são responsáveis por gerenciar a exibição gráfica. A tela é constantemente limpa e redesenhada a cada ciclo do jogo para refletir o estado atual do tabuleiro, a peça em queda e outras informações. Pontuação e Fim de Jogo: A pontuação é exibida no display de 7-segmentos presente no kit de desenvolvimento DE1-SoC. A cada vez que uma linha do tabuleiro é completada, ela é removida e a pontuação é atualizada usando a função clearLines(). Quando o jogo termina (se a peça alcançar o topo do tabuleiro), a mensagem "GAME OVER" é exibida e o jogo é finalizado. 
-
-
-O trabalho de conclusão de curso de Gabriel Sá por ser acessado em:
+O jogo exibe o tabuleiro e as peças na tela usando um controlador VGA (Video Graphics Array). Tabuleiro: O tabuleiro é uma matriz bidimensional (int board[ROWS][COLS]) que representa as células onde as peças caem. A função initBoard() inicializa essa matriz, e cada célula pode estar vazia ou ocupada por parte de uma peça. O tabuleiro é renderizado na tela a cada iteração do loop principal do jogo, sendo atualizado conforme as peças se movem ou são fixadas. Peças: As peças do jogo são representadas por structs que contêm suas formas e posições. A função getRandomPiece() seleciona aleatoriamente uma nova peça para cair. A peça atual é renderizada na posição adequada no tabuleiro com a função renderWithPiece(), que combina o estado do tabuleiro com a peça ativa. Exibição VGA: A comunicação com a tela VGA é feita através de um processador gráfico desenvolvido pelo estudante Gabriel Sá Barreto. As funções background_block, draw_square, clear_screen e bg_color são responsáveis por gerenciar a exibição gráfica. A tela é constantemente limpa e redesenhada a cada ciclo do jogo para refletir o estado atual do tabuleiro, a peça em queda e outras informações. Pontuação e Fim de Jogo: A pontuação é exibida no display de 7-segmentos presente no kit de desenvolvimento DE1-SoC. A cada vez que uma linha do tabuleiro é completada, ela é removida e a pontuação é atualizada usando a função clearLines(). Quando o jogo termina (se a peça alcançar o topo do tabuleiro), a mensagem "GAME OVER" é exibida e o jogo é finalizado. O trabalho de conclusão de curso de Gabriel Sá por ser acessado em:
 https://drive.google.com/file/d/1MlIlpB9TSnoPGEMkocr36EH9-CFz8psO/view
 
 ## FUNCIONAMENTO DO JOGO
@@ -133,9 +130,46 @@ A biblioteca pthread é crucial para integrar a leitura dos dados do acelerômet
 
 A biblioteca desenvolvida é cruicial para exibir no monitor o jogo. Contém diversas funções responsáveis por realizar o mapeamento da memória, a exibição de blocos no background, a troca de cor do background, além da exibição de sprites.
 
+## RESULTADOS
+
+**Tela inicial**
+<div align="justify"> 
+<p align="center">
+  <img src="images/tela_inicial.png" width = "400" />
+</p>
+
+
+**Tela de pausa**
+
+<div align="justify"> 
+<p align="center">
+  <img src="images/pause.png" width = "400" />
+</p>
+
+**Tela de Game over**
+
+<div align="justify"> 
+<p align="center">
+  <img src="images/gameover.png" width = "400" />
+</p>
+
+
+**Jogo em funcionamento**
+
+<div align="justify">  
+  <p align="center">
+    <a href="https://link_do_video.com">
+      <img src="images/demo.png" width="400" />
+    </a>
+  </p>
+  <p align="center">
+    <em><a href="https://www.youtube.com/shorts/PCnSJu0J768">Assista ao vídeo de demonstração</a></em>
+  </p>
+</div>
 
 ## CONCLUSÃO
-<div align="justify"> 
+
+
 
 A presente implementação do clássico jogo Tetris, desenvolvida em linguagem C para a plataforma DE1-SoC, demonstra a viabilidade e eficácia da utilização de sistemas embarcados em aplicações de entretenimento. A arquitetura da placa DE1-SoC, aliada a drivers disponíveis e ao processador gráfico desenvolvido pelo estudante Gabriel Sá Barreto , proporcionou o ambiente ideal para o desenvolvimento e execução do jogo, atendendo integralmente aos requisitos propostos. A integração entre o software e o hardware da plataforma permitiu a utilização coordenada de diversos periféricos, como a interface VGA para a renderização gráfica, o acelerômetro para a interação por movimento e os botões para o controle tradicional do jogo. Os testes realizados demonstraram a estabilidade e o desempenho satisfatório do sistema, garantindo a execução confiável do jogo em diferentes cenários. A arquitetura ARMv7 da plataforma DE1-SoC, em conjunto com a linguagem C, proporcionou um ambiente de desenvolvimento eficiente, permitindo a implementação de algoritmos para a execução. Além de cumprir os objetivos específicos do projeto, a implementação do Tetris em plataforma DE1-SoC contribuiu significativamente para o desenvolvimento das competências dos envolvidos, aprofundando os conhecimentos em sistemas embarcados, arquitetura ARMv7 e programação em linguagem C. A experiência adquirida neste projeto abre novas perspectivas para o desenvolvimento de sistemas digitais mais complexos e a criação de soluções inovadoras em diversos setores.
 
