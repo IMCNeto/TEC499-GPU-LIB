@@ -1,3 +1,3 @@
 all:
-	gcc -g -o main teste_func.c background.s -std=c99 -lpthread
+	gcc -g -o main main.c background.s -std=c99 -lpthread
 	./main
