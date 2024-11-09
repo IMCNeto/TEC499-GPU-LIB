@@ -46,6 +46,19 @@ A placa DE1-SoC é um kit de desenvolvimento que combina um processador ARM Cort
 
 O ADXL345 é um acelerômetro digital de baixa potência e alta resolução, projetado para medir aceleração em três eixos (X, Y e Z). Ele pode detectar acelerações de até ±16g com uma precisão de 13 bits e é amplamente usado em dispositivos portáteis, sistemas de navegação, sensores de inclinação, e várias aplicações em robótica e sistemas embarcados.
 
+
+**GPU**
+
+A GPU desenvolvida por Gabriel Sá Barreto utiliza uma arquitetura personalizada em FPGA (Field-Programmable Gate Array) para facilitar a criação de jogos 2D. A arquitetura é baseada em sprites, que são pequenos blocos gráficos que representam os elementos do jogo, como personagens, obstáculos e outros objetos visuais. Ela é projetada para renderizar imagens em tempo real em um padrão VGA, com resolução de 640x480 pixels e taxa de atualização de 60 quadros por segundo, permitindo gráficos fluídos e responsivos.
+
+Essa GPU é composta por vários componentes integrados que trabalham de forma coordenada para processar gráficos de forma eficiente. O processador principal, Nios II, é um processador softcore da Altera que executa o código do jogo escrito em C. Ele interage com o processador gráfico dedicado, enviando instruções para movimentação e atualização dos sprites na tela. As instruções são armazenadas em FIFOs (First In First Out), que ajudam a sincronizar as operações entre o processador principal e o processador gráfico.
+
+A arquitetura também inclui um controlador VGA, responsável por sincronizar os sinais de vídeo para a renderização na tela. O processador gráfico realiza a renderização dos sprites com base nas instruções recebidas, o que inclui movimentação, alteração de layout e renderização de polígonos básicos, como quadrados e triângulos. Essas operações são feitas em tempo real, e o sistema de memória de sprites permite armazenar até 32 sprites de 20x20 pixels, que são atualizados automaticamente sem intervenção do software, agilizando o processamento gráfico.
+
+Além disso, há um co-processador integrado que usa uma estrutura de pipeline para otimizar a construção de polígonos convexos, como quadrados e triângulos. Ele calcula a posição dos pixels que formam esses polígonos e usa um sistema de prioridade para lidar com sobreposições. Esse co-processador trabalha a uma frequência de 100MHz, processando instruções em paralelo para garantir que cada pixel seja atualizado a tempo para o próximo quadro, permitindo gráficos mais complexos sem comprometer a performance.
+
+A GPU também oferece uma API simplificada para facilitar o desenvolvimento dos jogos, disponibilizando funções para definir e controlar sprites e o background. Essa API permite que desenvolvedores programem movimentações e detectem colisões entre sprites, facilitando a criação de jogos bidimensionais. Essa estrutura foi validada com a criação de jogos clássicos como *Asteroids* e *Space Invaders*, o que demonstrou a capacidade da arquitetura em suportar jogos 2D interativos com elementos móveis e gráficos em tempo real.
+
 ## SOFTWARE UTILIZADO
 <div align="justify"> 
 
@@ -76,6 +89,34 @@ O acelerômetro utilizado no jogo é um dispositivo ADXL345, que se comunica via
 **Threads**
 
 O jogo faz uso de threads para permitir a execução de tarefas concorrentes. Duas threads são criadas para gerenciar a leitura contínua do acelerômetro e o monitoramento dos botões do dispositivo. Thread do Acelerômetro: A função accel_working() é executada em uma thread separada. Essa thread continuamente verifica se há novos dados no acelerômetro e, se houver, lê os valores do eixo X para determinar se a peça deve se mover para a esquerda ou direita no tabuleiro. O uso de usleep() controla a frequência de leitura para evitar sobrecarga de processamento. Thread dos Botões: A função button_threads() também é executada em uma thread separada, que monitora o estado dos botões do hardware. Os botões têm diferentes funcionalidades: um deles pausa e retoma o jogo, e outro termina o jogo. Isso é feito através de uma leitura contínua dos botões usando a biblioteca KEY_read(), onde os eventos de pressionamento dos botões disparam as ações correspondentes no jogo. Sincronização com o Jogo: As threads permitem que o jogo continue a rodar independentemente, enquanto as entradas de controle (acelerômetro e botões) são monitoradas em segundo plano. Isso garante que a interação seja fluida e sem interrupções na lógica principal do jogo.
+
+
+**Biblioteca de vídeo**
+
+A biblioteca de vídeo desenvolvida em assembly para ARM Cortex-A9 utiliza conceitos de baixo nível para maximizar o desempenho gráfico em dispositivos que operam com recursos limitados. A arquitetura de GPU de Gabriel Sá Barreto oferece uma infraestrutura de suporte à manipulação eficiente de gráficos, complementada por uma API simplificada que facilita a criação e atualização de sprites e o controle de background. Cada função da biblioteca é projetada para interagir diretamente com o hardware, otimizando a velocidade de execução e reduzindo a latência na atualização dos frames.
+
+mem:
+
+Função de manipulação de memória que gerencia a alocação e controle de dados gráficos, como cores de pixels e dados de sprites. Essa função é responsável por armazenar e recuperar informações diretamente da memória, onde os gráficos são processados. Ao lidar com registradores e endereços de memória, a função mem permite acesso direto ao armazenamento dos dados que compõem o display, o que é crucial para otimizar a renderização gráfica.
+set_sprite:
+
+Configura a posição de um sprite na tela, definindo suas coordenadas X e Y, seu offset de memória (para identificar o sprite na memória gráfica) e o bit de ativação. A set_sprite utiliza registradores para aplicar rapidamente essas informações, o que possibilita a movimentação dos sprites em tempo real sem impactar o desempenho. Essa função é essencial para controlar personagens e objetos móveis dentro do jogo.
+set_dp:
+
+A função set_dp configura o ponto de referência de um polígono, definindo sua posição na tela e outras propriedades, como cor e forma (triângulo ou quadrado). Utilizando o co-processador da GPU, essa função otimiza o processamento de polígonos para que cada elemento gráfico tenha uma orientação e posição específicas, gerando gráficos nítidos e atualizados a cada quadro.
+set_background_block:
+
+Define a cor de blocos específicos do background (fundo), segmentados em uma grade de 8x8 pixels, preenchendo cada bloco com valores RGB. Esse método permite personalizar o cenário de forma modular, alterando apenas seções específicas do fundo, o que facilita a criação de cenários complexos sem a necessidade de redesenhar toda a tela.
+display_7seg:
+
+A função display_7seg gerencia a exibição de valores numéricos em um display de 7 segmentos, comumente usado para mostrar pontuações, vidas restantes ou temporizadores. A função converte os valores em números visíveis no display, que é sincronizado com o estado atual do jogo. A interação direta com o hardware permite uma atualização rápida e precisa, melhorando a interatividade visual.
+push_button:
+
+Gerencia as entradas de botões físicos, capturando os sinais de pressão e associando-os a ações específicas no jogo, como saltar, atirar ou mover. Essa função lê o estado de cada botão e, ao ser acionado, dispara as operações correspondentes, permitindo que os jogadores controlem diretamente os elementos da interface de maneira precisa e com baixa latência.
+wrregfull:
+
+A função wrregfull verifica se as FIFOs (First In, First Out) usadas para armazenar instruções estão cheias, evitando sobrecargas e erros de dados. Ela garante que as instruções sejam processadas na ordem correta e sem perda, essencial para a renderização contínua e estável dos gráficos. Esse controle de fluxo é fundamental para manter o desempenho do sistema gráfico e garantir a integridade dos dados visuais.
+Essas funções, projetadas para o ARMv7 Cortex-A9, atuam em conjunto com o co-processador gráfico, aproveitando pipelines e manipulação direta de registradores. Essa abordagem assegura um processamento gráfico eficiente, adequado para aplicações de jogos que demandam renderização rápida e responsiva.
 
 **Tabuleiro e Peças no VGA**
 
