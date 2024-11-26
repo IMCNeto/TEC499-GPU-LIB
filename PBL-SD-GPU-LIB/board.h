@@ -20,7 +20,6 @@
 #define YELLOW 255
 
 extern void background_block(int , int );
-extern void background_block(int , int );
 extern void display_7seg(int cent_milhar,int dez_milhar,int milhar,int centenas,int dezenas,int unidade);
 
 void initBoard(int board[ROWS][COLS]);
